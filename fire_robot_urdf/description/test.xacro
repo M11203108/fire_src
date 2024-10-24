@@ -1,0 +1,54 @@
+<?xml version="1.0" ?>
+<robot name="wheeltec_robot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <!-- 定義材質 -->
+    <xacro:property name="color_white" value="1 1 1 1"/>
+    <xacro:property name="color_black" value="0 0 0 1"/>
+
+    <!-- 定義基本參數 -->
+    <xacro:property name="base_link_size" value="0.27 0.185 0.055"/>
+    <xacro:property name="wheel_radius" value="0.0375"/>
+    <xacro:property name="wheel_length" value="0.03"/>
+
+    <!-- 定義基底連接 -->
+    <link name="base_link">
+        <visual>
+            <origin xyz="0 0 0.0975" rpy="0 0 0" />
+            <geometry>
+                <box size="${base_link_size}"/>
+            </geometry>
+            <material name="white">
+                <color rgba="${color_white}"/>
+            </material>
+        </visual>
+    </link>   
+
+    <!-- 左輪 -->
+    <xacro:macro name="wheel_joint" params="joint_name parent_link child_link joint_origin">
+        <joint name="${joint_name}" type="continuous">
+            <origin xyz="${joint_origin}" rpy="1.57 0 0"/>
+            <parent link="${parent_link}"/>
+            <child link="${child_link}"/>
+            <axis xyz="0 1 0"/>
+        </joint>
+
+        <link name="${child_link}">
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <cylinder radius="${wheel_radius}" length="${wheel_length}"/>
+                </geometry>
+                <material name="black">
+                    <color rgba="${color_black}"/>
+                </material>
+            </visual>
+        </link>
+    </xacro:macro>
+
+    <!-- 使用 macro 定義所有輪子 -->
+    <xacro:wheel_joint joint_name="left_wheel_joint" parent_link="base_link" child_link="left_wheel_link" joint_origin="-0.085 0.09 0.0375"/>
+    <xacro:wheel_joint joint_name="right_wheel_joint" parent_link="base_link" child_link="right_wheel_link" joint_origin="-0.085 -0.09 0.0375"/>
+    <xacro:wheel_joint joint_name="left_front_joint" parent_link="base_link" child_link="left_front_link" joint_origin="0.085 0.09 0.0375"/>
+    <xacro:wheel_joint joint_name="right_front_joint" parent_link="base_link" child_link="right_front_link" joint_origin="0.085 -0.09 0.0375"/>
+
+</robot>
