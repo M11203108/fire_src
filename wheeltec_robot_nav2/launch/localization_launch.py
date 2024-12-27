@@ -38,7 +38,7 @@ def generate_launch_description():
     #If you want to use the DWB algorithm, you can change the input parameters to wheeltec-dwb.yaml
     my_nav_dir = get_package_share_directory('wheeltec_nav2')
     my_param_dir = os.path.join(my_nav_dir, 'param')
-    my_param_file = 'param_senior_diff.yaml'
+    my_param_file = 'param_mini_mec.yaml'
     my_map_dir = os.path.join(my_nav_dir, 'map')
     my_map_file = 'WHEELTEC.yaml'
     
@@ -113,7 +113,7 @@ def generate_launch_description():
     load_nodes = GroupAction(
         condition=IfCondition(PythonExpression(['not ', use_composition])),
         actions=[
-            Node(
+            Node( #地圖伺服器
                 package='nav2_map_server',
                 executable='map_server',
                 name='map_server',
@@ -121,7 +121,7 @@ def generate_launch_description():
                 respawn_delay=2.0,
                 parameters=[configured_params],
                 remappings=remappings),
-            Node(
+            Node( #確定機器人在地圖中的位置
                 package='nav2_amcl',
                 executable='amcl',
                 name='amcl',
@@ -129,7 +129,7 @@ def generate_launch_description():
                 respawn_delay=2.0,
                 parameters=[configured_params],
                 remappings=remappings),
-            Node(
+            Node( #確保模組按照正確的順序啟動和停止
                 package='nav2_lifecycle_manager',
                 executable='lifecycle_manager',
                 name='lifecycle_manager_localization',

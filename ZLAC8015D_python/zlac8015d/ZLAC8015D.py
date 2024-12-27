@@ -27,6 +27,7 @@ class Controller:
 		self.R_ACL_TIME = 0x2081
 		self.L_DCL_TIME = 0x2082
 		self.R_DCL_TIME = 0x2083
+		self.EMG = 0x2016
 
 		## Velocity control
 		self.L_CMD_RPM = 0x2088
@@ -345,4 +346,8 @@ class Controller:
 		r_tick = np.int32(((r_pul_hi & 0xFFFF) << 16) | (r_pul_lo & 0xFFFF))
 
 		return l_tick, r_tick
+	
+	def set_emg_stop(self):
+		emg_result = self.client.write_register(self.EMG, 1, unit=self.ID)
+		return emg_result
 	

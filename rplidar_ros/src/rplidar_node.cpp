@@ -267,7 +267,7 @@ class RPlidarNode : public rclcpp::Node
         float angle = getAngle(nodes[i]);
 
         // 判斷角度是否在 0 到 90 度或 225 到 360 度之間
-        if ((angle >= 0.0f && angle <= 90.0f) || (angle >= 225.0f && angle < 360.0f)) {
+        if ((angle >= 0.0f && angle <= 80.0f) || (angle >= 190.0f && angle < 360.0f)) {
             scan_msg->ranges[i] = read_value;
             scan_msg->intensities[i] = (float)(nodes[i].quality >> 2);
         } else {

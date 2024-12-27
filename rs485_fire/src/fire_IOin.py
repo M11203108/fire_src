@@ -8,7 +8,7 @@ import time
 
 client = ModbusClient(
     method='rtu',       # 通訊模式
-    port='/dev/ttyUSB5', # 串口設備
+    port='/dev/IOttyUSB8', # 串口設備
     baudrate=9600,     # 波特率
     stopbits=2,          # 停止位
     bytesize=8,          # 資料位

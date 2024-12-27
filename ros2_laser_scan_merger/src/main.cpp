@@ -109,7 +109,8 @@ private:
         {
             float range = scan->ranges[i];
 
-            if (std::isfinite(range))
+            
+            if (std::isfinite(range) && range >= 0.1)
             {
                 // 将极坐标转换为笛卡尔坐标
                 float x = range * std::cos(angle);

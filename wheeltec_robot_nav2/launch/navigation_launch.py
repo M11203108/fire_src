@@ -176,43 +176,43 @@ def generate_launch_description():
         condition=IfCondition(use_composition),
         target_container=container_name,
         composable_node_descriptions=[
-            ComposableNode(
+            ComposableNode( #負責將機器人的路徑轉換為即時的速度命令（cmd_vel）
                 package='nav2_controller',
                 plugin='nav2_controller::ControllerServer',
                 name='controller_server',
                 parameters=[configured_params],
                 remappings=remappings),
-            ComposableNode(
+            ComposableNode( #路徑平滑處理器
                 package='nav2_smoother',
                 plugin='nav2_smoother::SmootherServer',
                 name='smoother_server',
                 parameters=[configured_params],
                 remappings=remappings),
-            ComposableNode(
+            ComposableNode( #nav2_planner
                 package='nav2_planner',
                 plugin='nav2_planner::PlannerServer',
                 name='planner_server',
                 parameters=[configured_params],
                 remappings=remappings),
-            ComposableNode(
+            ComposableNode( #處理導航中的高層行為，提供如停靠、避障等定製功能
                 package='nav2_behaviors',
                 plugin='behavior_server::BehaviorServer',
                 name='behavior_server',
                 parameters=[configured_params],
                 remappings=remappings),
-            ComposableNode(
+            ComposableNode( #行為樹導航節點，負責執行導航任務的行為邏輯
                 package='nav2_bt_navigator',
                 plugin='nav2_bt_navigator::BtNavigator',
                 name='bt_navigator',
                 parameters=[configured_params],
                 remappings=remappings),
-            ComposableNode(
+            ComposableNode( #nav2_waypoint_follower
                 package='nav2_waypoint_follower',
                 plugin='nav2_waypoint_follower::WaypointFollower',
                 name='waypoint_follower',
                 parameters=[configured_params],
                 remappings=remappings),
-            ComposableNode(
+            ComposableNode( #確保模組按照正確的順序啟動和停止
                 package='nav2_lifecycle_manager',
                 plugin='nav2_lifecycle_manager::LifecycleManager',
                 name='lifecycle_manager_navigation',

@@ -529,5 +529,3 @@ if __name__ == '__main__':
 	# 		robot.set_V_task(0,0,0)
 	# 		robot.close()
 	# 		break
-			
-	

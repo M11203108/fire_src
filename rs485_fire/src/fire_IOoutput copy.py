@@ -8,7 +8,7 @@ import time
 
 client = ModbusClient(
     method='rtu',       # 通訊模式
-    port='/dev/ttyUSB4', # 串口設備
+    port='/dev/IOttyUSB', # 串口設備
     baudrate=9600,     # 波特率
     stopbits=2,          # 停止位
     bytesize=8,          # 資料位
@@ -28,16 +28,16 @@ if client.connect():
     IOoutput_coil = coil_ledL
     IOoutput_coil2 = coil_ledR
 
-    # write_result = client.write_coil(IOoutput_coil, True, unit=UNIT)
-    # client.write_coil(IOoutput_coil2, True, unit=UNIT)
+    write_result = client.write_coil(IOoutput_coil, True, unit=UNIT)
+    client.write_coil(IOoutput_coil2, True, unit=UNIT)
 
-    # if not write_result.isError():
-    #     print(f"Write coilLED open success")
-    # else:
-    #     print("Write coil open error")
-    #     print(write_result)
+    if not write_result.isError():
+        print(f"Write coilLED open success")
+    else:
+        print("Write coil open error")
+        print(write_result)
 
-    # time.sleep(600)
+    time.sleep(10)
 
     write_result = client.write_coil(IOoutput_coil, False, unit=UNIT)
     client.write_coil(IOoutput_coil2, False, unit=UNIT)

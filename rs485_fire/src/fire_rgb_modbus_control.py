@@ -1,6 +1,6 @@
 import serial
 
-ser = serial.Serial('/dev/ttyUSB3', 9600, timeout=1, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE, bytesize=serial.EIGHTBITS)
+ser = serial.Serial('/dev/LEDttyUSB', 9600, timeout=1, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE, bytesize=serial.EIGHTBITS)
 
 def send_command(command, description):
     ser.write(command)
@@ -22,7 +22,8 @@ if ser.isOpen():
     send_command(RGB_count, "RGB set")
     
     # 設置燈光顏色 (純白色)
-    light_count = bytes([0xA5, 0x06, 0x00, 0xA0, 0xFF, 0xFF, 0xFF, 0xEE, 0x5A])
+    light_count = bytes([0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])
+    # light_count = bytes([0xA5, 0x06, 0x00, 0xA0, 0xFF, 0xFF, 0xFF, 0xEE, 0x5A])
     send_command(light_count, "Light set")
     
 else:

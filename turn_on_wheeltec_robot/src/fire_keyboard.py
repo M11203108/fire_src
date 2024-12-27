@@ -37,8 +37,8 @@ CTRL-C to quit
 moveBindings = {
         'i':(1,0,0,0),
         'o':(0,1,0,0),  # 右原地旋轉
-        'j':(0,0,0,1),
-        'l':(0,0,0,-1),
+        'j':(0,0,0,-1),
+        'l':(0,0,0,1),
         'u':(0,-1,0,0),   # 左原地旋轉
         ',':(-1,0,0,0),
         '.':(-1,0,0,1),
@@ -85,8 +85,8 @@ def main(args=None):
         
     pub = node.create_publisher(Twist, 'cmd_vel', qos)
 
-    speed = 0.5
-    turn = 1.0
+    speed = 0.15
+    turn = 0.05
     x = 0
     y = 0
     z = 0
