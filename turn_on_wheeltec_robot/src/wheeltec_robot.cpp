@@ -540,7 +540,6 @@ turn_on_robot::~turn_on_robot()
   }
   Stm32_Serial.close(); //Close the serial port //关闭串口  
   RCLCPP_INFO(this->get_logger(),"Shutting down"); //Prompt message //提示信息
-  
 }
 
 

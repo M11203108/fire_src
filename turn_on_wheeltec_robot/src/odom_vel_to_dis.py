@@ -85,7 +85,7 @@ class ReadOdomVelToDis(Node):
         self.MOTOR_D_Encoder = -self.MOTOR_D_Encoder
 
         # 計算速度
-        self.Vx = (self.MOTOR_A_Encoder + self.MOTOR_B_Encoder + self.MOTOR_C_Encoder + self.MOTOR_D_Encoder) / 4
+        self.Vx = -(self.MOTOR_A_Encoder + self.MOTOR_B_Encoder + self.MOTOR_C_Encoder + self.MOTOR_D_Encoder) / 4#-
         self.Vy = (-self.MOTOR_A_Encoder + self.MOTOR_B_Encoder + self.MOTOR_C_Encoder - self.MOTOR_D_Encoder) / 4
         self.Vz = (-self.MOTOR_A_Encoder + self.MOTOR_B_Encoder - self.MOTOR_C_Encoder + self.MOTOR_D_Encoder) / (2 * (WHEEL_AXLESPACING + WHEEL_SPACING))
 
@@ -151,11 +151,12 @@ class ReadOdomVelToDis(Node):
         vz_linear = float(vz * ((WHEEL_SPACING + WHEEL_AXLESPACING) / 2))
         speed_A = int((vx - vy - vz_linear) * (30 / np.pi / self.motorAB.R_Wheel))
         speed_B = int((vx + vy + vz_linear) * (30 / np.pi / self.motorAB.R_Wheel))
-        speed_C = int((vx - vy + vz_linear) * (30 / np.pi / self.motorCD.R_Wheel))
-        speed_D = int((vx + vy - vz_linear) * (30 / np.pi / self.motorCD.R_Wheel))
-        self.motorAB.set_rpm(speed_A, -speed_B)
-        self.motorCD.set_rpm(speed_C, -speed_D)
-
+        speed_D = int((vx - vy + vz_linear) * (30 / np.pi / self.motorCD.R_Wheel))
+        speed_C = int((vx + vy - vz_linear) * (30 / np.pi / self.motorCD.R_Wheel))
+        self.motorAB.set_rpm(speed_B, -speed_A)
+        self.motorCD.set_rpm(speed_D, -speed_C)
+        print("cmd=",vx,vy,vz)
+        print(speed_A,speed_B,speed_C,speed_D)
     def on_shutdown(self):
         self.motorAB.disable_motor()
         self.motorCD.disable_motor()
