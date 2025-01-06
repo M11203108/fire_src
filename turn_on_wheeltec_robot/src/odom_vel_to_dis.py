@@ -55,7 +55,7 @@ class ReadOdomVelToDis(Node):
         self.prev_time = time.time()
 
         # 初始化計時器
-        self.timer_period = 0.1
+        self.timer_period = 0.05
         self.timer = self.create_timer(self.timer_period, self.Vel_to_Dis)
 
         # 設置加速度和減速度時間
@@ -148,6 +148,9 @@ class ReadOdomVelToDis(Node):
         self.set_speeds(vx, vy, vz)
 
     def set_speeds(self, vx, vy, vz): # 速度轉換為轉速
+        vy = 0
+        # if abs(vx) < 0.01: vx = 0
+        if abs(vz) < 0.05: vz = 0
         vz_linear = float(vz * ((WHEEL_SPACING + WHEEL_AXLESPACING) / 2))
         speed_A = int((vx - vy - vz_linear) * (30 / np.pi / self.motorAB.R_Wheel))
         speed_B = int((vx + vy + vz_linear) * (30 / np.pi / self.motorAB.R_Wheel))

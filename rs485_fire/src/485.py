@@ -13,7 +13,8 @@ def registers_to_float(high, low):
 
 client = ModbusClient(
     method='rtu',
-    port='/dev/ttyUSB7',
+    port='/dev/updottyUSB',
+    # port='/dev/LRttyUSB',
     baudrate=9600,
     parity='N',
     stopbits=2,
@@ -21,10 +22,10 @@ client = ModbusClient(
     timeout=3
 )
 
-circle = 0.15  # 設定的目標圈數
-set_rpm = 20  # 設定轉速
-set_rpm_1 = 5  # 設定轉速
-direction = 0x0000
+circle = 0.25  # 設定的目標圈數
+set_rpm = 30  # 設定轉速
+set_rpm_1 = 30  # 設定轉速
+direction = 0x0001
 
 ieee_754_rpm = float_to_hex(set_rpm)
 ieee_754_rpm_high = int('0x'+ieee_754_rpm[0:4], 16)
