@@ -62,11 +62,11 @@ def generate_launch_description():
             arguments=['0', '0', '0','0', '0','0','base_footprint','gyro_link'],
     )
     
-    imu_filter_node =  launch_ros.actions.Node(
-        package='imu_filter_madgwick',
-        executable='imu_filter_madgwick_node',
-        parameters=[imu_config]
-    )
+#     imu_filter_node =  launch_ros.actions.Node(
+#         package='imu_filter_madgwick',
+#         executable='imu_filter_madgwick_node',
+#         parameters=[imu_config]
+#     )
     
                            
     joint_state_publisher_node = launch_ros.actions.Node(
@@ -83,7 +83,7 @@ def generate_launch_description():
     ld.add_action(base_to_link)
     ld.add_action(base_to_gyro)
     ld.add_action(joint_state_publisher_node)
-    ld.add_action(imu_filter_node)    
+#     ld.add_action(imu_filter_node)    
     ld.add_action(robot_ekf)
 
     return ld

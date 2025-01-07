@@ -1,7 +1,7 @@
 from pymodbus.client.sync import ModbusSerialClient as ModbusClient
 import time
 import struct
-from pynput import keyboard
+import json
 
 # 將浮點數轉換為16進位表示的字串
 def float_to_hex(f):
@@ -42,7 +42,7 @@ def move_to_zero_position(client, unit, current_encoder, zero_encoder, set_rpm, 
     # 計算目標圈數
     position_diff = abs(zero_encoder - current_encoder)
     target_circle = position_diff / resolution
-    direction = 0x0000
+    direction = 0x0000 if zero_encoder > current_encoder else 0x0001
 
     # 移動馬達
     move_motor(client, unit, direction, target_circle, set_rpm)
@@ -63,13 +63,13 @@ def move_to_zero_position(client, unit, current_encoder, zero_encoder, set_rpm, 
 def zero_calibration(client, unit, resolution):
     print("Starting zero calibration...")
 
-    # 左極限
-    print("Moving to left limit...")
-    left_limit = None
+    # 找到上極限
+    print("Moving to up limit...")
+    up_limit = None
     stable_count = 0
     previous_encoder = None
     while True:
-        move_motor(client, unit, 0x0000, 1.0, 50)  # 嘗試大範圍移動
+        move_motor(client, unit, 0x0001, 1.0, 200)  # 嘗試大範圍移動
         current_encoder = read_encoder_raw(client, unit)
         print(f"Current encoder: {current_encoder}")
 
@@ -81,18 +81,18 @@ def zero_calibration(client, unit, resolution):
         previous_encoder = current_encoder
 
         if stable_count >= 10:
-            left_limit = current_encoder
+            up_limit = current_encoder
             break
 
-    print(f"Left limit: {left_limit}")
+    print(f"Up limit: {up_limit}")
 
-    # 右極限
-    print("Moving to right limit...")
-    right_limit = None
+    # 找到下極限
+    print("Moving to down limit...")
+    down_limit = None
     stable_count = 0
     previous_encoder = None
     while True:
-        move_motor(client, unit, 0x0001, 1.0, 50)  # 嘗試大範圍移動
+        move_motor(client, unit, 0x0000, 1.0, 200)  # 嘗試大範圍移動
         current_encoder = read_encoder_raw(client, unit)
         print(f"Current encoder: {current_encoder}")
 
@@ -103,29 +103,33 @@ def zero_calibration(client, unit, resolution):
 
         previous_encoder = current_encoder
 
-        if stable_count >= 5:
-            right_limit = current_encoder
+        if stable_count >= 10:
+            down_limit = current_encoder
             break
 
-    print(f"Right limit: {right_limit}")
+    print(f"Down limit: {down_limit}")
 
-    # 計算零點
-    zero_encoder = (left_limit + right_limit) // 2
-    print(f"Zero position set to: {zero_encoder}")
+    # 設定下極限為 0 度基準
+    zero_encoder = down_limit
 
-    print(f"Left limit: {left_limit}, Left limit angle: {(left_limit - zero_encoder) * 360.0 / resolution:.2f} degrees")
-    print(f"Right limit: {right_limit}, Right limit angle: {(right_limit - zero_encoder) * 360.0 / resolution:.2f} degrees")
+    # 計算角度範圍
+    down_limit_angle = 0.0
+    up_limit_angle = (up_limit - down_limit) * 360.0 / resolution
 
+    print(f"Zero position set to: {zero_encoder} (0 degrees)")
+    print(f"Down limit: {down_limit}, Down limit angle: {down_limit_angle:.2f} degrees")
+    print(f"Up limit: {up_limit}, Up limit angle: {up_limit_angle:.2f} degrees")
 
-    # 移動到零點
-    move_to_zero_position(client, unit, read_encoder_raw(client, unit), zero_encoder, 50, resolution)
-    return zero_encoder, left_limit, right_limit
+    # 移動到 0 度
+    # move_to_zero_position(client, unit, read_encoder_raw(client, unit), zero_encoder, 50, resolution)
+
+    return zero_encoder, down_limit, up_limit
 
 # 主程式入口
 def main():
     client = ModbusClient(
         method='rtu',
-        port='/dev/LRttyUSB',
+        port='/dev/updottyUSB',
         baudrate=9600,
         parity='N',
         stopbits=2,
@@ -143,61 +147,31 @@ def main():
     print("Connected")
 
     # 執行歸零校準
-    zero_encoder, left_limit, right_limit = zero_calibration(client, UNIT, resolution)
-    print(f"Calibration complete. Zero encoder: {zero_encoder}, Left limit: {left_limit}, Right limit: {right_limit}")
-    print(f"Left limit angle: {(left_limit - zero_encoder) * 360.0 / resolution:.2f} degrees")
-    print(f"Right limit angle: {(right_limit - zero_encoder) * 360.0 / resolution:.2f} degrees")
+    zero_encoder, down_limit, up_limit = zero_calibration(client, UNIT, resolution)
+    print(f"Calibration complete. Zero encoder: {zero_encoder}, Down limit: {down_limit}, Up limit: {up_limit}")
+    print(f"Down limit angle: 0.00 degrees")
+    print(f"Up limit angle: {(up_limit - down_limit) * 360.0 / resolution:.2f} degrees")
+
+    # 保存結果到文件
+    def save_calibration_result(file_path, result):
+        with open(file_path, 'w') as f:
+            json.dump(result, f)
+    
+    # 完成校準後
+    calibration_result = {
+        "zero_encoder": zero_encoder,
+        "down_limit": down_limit,
+        "up_limit": up_limit,
+        "down_limit_angle": 0.0,
+        "up_limit_angle": (up_limit - down_limit) * 360.0 / resolution
+    }
+
+    save_calibration_result('/home/robot/wheeltec_ros2/src/rs485_fire/src/calibration_updo.json', calibration_result)
+    print("Calibration results saved to /home/robot/wheeltec_ros2/src/rs485_fire/src/calibration_updo.json")
 
 
-    # 進入角度控制模式
-    current_angle = 0  # 當前角度（以歸零點為0度）
-    while True:
-        user_input = input("Enter target angle (e.g., 20 or -15), or 'q' to quit: ").strip()
-        if user_input.lower() == 'q':
-            print("Exiting angle control mode.")
-            break
-
-        try:
-            target_angle = float(user_input)
-            left_limit_angle = (left_limit - zero_encoder) * 360.0 / resolution
-            right_limit_angle = (right_limit - zero_encoder) * 360.0 / resolution
-            buffer_zone = 5.0  # 緩衝範圍
-
-            # 檢查目標角度是否在合法範圍內
-            if (target_angle >= left_limit_angle - buffer_zone or 
-                target_angle <= right_limit_angle + buffer_zone):
-                print(f"Invalid angle. Target angle must be within {right_limit_angle + buffer_zone:.2f} to {left_limit_angle - buffer_zone:.2f} degrees.")
-                continue
-
-
-            # 如果角度合法，進行移動
-            while True:
-                # 計算角度差並決定旋轉方向
-                current_encoder = read_encoder_raw(client, UNIT)
-                current_angle = (current_encoder - zero_encoder) * 360.0 / resolution
-                angle_diff = target_angle - current_angle
-
-                # 如果在允許的誤差範圍內，停止調整
-                if abs(angle_diff) < 0.5:
-                    client.write_register(0x004F, 0x0000, unit=UNIT)  # 停止馬達
-                    print(f"Reached target angle: {current_angle:.2f} degrees")
-                    break
-
-                # 設置旋轉方向和目標圈數
-                direction = 0x0000 if angle_diff > 0 else 0x0001
-                target_circle = abs(angle_diff / 360.0)
-                move_motor(client, UNIT, direction, target_circle, 100)
-
-                print(f"Current angle: {current_angle:.2f} degrees, Target angle: {target_angle:.2f} degrees")
-                time.sleep(0.1)
-
-        except ValueError:
-            print("Invalid input. Please enter a valid angle or 'q' to quit.")
-
-        client.close()
-        print("Connection closed")
-
+    client.close()
+    print("Connection closed")
 
 if __name__ == "__main__":
     main()
-

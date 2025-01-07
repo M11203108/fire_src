@@ -148,9 +148,10 @@ class ReadOdomVelToDis(Node):
         self.set_speeds(vx, vy, vz)
 
     def set_speeds(self, vx, vy, vz): # 速度轉換為轉速
-        vy = 0
+        #vy = 0
+        # vz = 0
         # if abs(vx) < 0.01: vx = 0
-        if abs(vz) < 0.05: vz = 0
+        #if abs(vz) < 0.01: vz = 0
         vz_linear = float(vz * ((WHEEL_SPACING + WHEEL_AXLESPACING) / 2))
         speed_A = int((vx - vy - vz_linear) * (30 / np.pi / self.motorAB.R_Wheel))
         speed_B = int((vx + vy + vz_linear) * (30 / np.pi / self.motorAB.R_Wheel))

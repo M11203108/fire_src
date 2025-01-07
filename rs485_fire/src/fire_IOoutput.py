@@ -25,19 +25,19 @@ if client.connect():
     coil_sound = 0x0002
     coil_ledL = 0x0004
     coil_ledR = 0x0005
-    IOoutput_coil = coil_ball
-    IOoutput_coil2 = coil_motor
+    IOoutput_coil = coil_motor
+    IOoutput_coil2 = coil_ball
 
-    # write_result = client.write_coil(IOoutput_coil, True, unit=UNIT)
-    # client.write_coil(IOoutput_coil2, True, unit=UNIT)
+    write_result = client.write_coil(IOoutput_coil, True, unit=UNIT)
+    client.write_coil(IOoutput_coil2, True, unit=UNIT)
 
-    # if not write_result.isError():
-    #     print(f"Write coilLED open success")
-    # else:
-    #     print("Write coil open error")
-    #     print(write_result)
+    if not write_result.isError():
+        print(f"Write coilLED open success")
+    else:
+        print("Write coil open error")
+        print(write_result)
 
-    # time.sleep(600)
+    time.sleep(30)
 
     write_result = client.write_coil(IOoutput_coil, False, unit=UNIT)
     client.write_coil(IOoutput_coil2, False, unit=UNIT)
