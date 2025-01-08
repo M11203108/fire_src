@@ -20,7 +20,7 @@ class MainControlNode(Node):
     def __init__(self):
 
         # 創建控制實例
-        self.mission = Mission(self.sprayMission, self)
+        self.mission = Mission(self)
 
         self.create_subscription(
             ThermalAlert,
@@ -98,7 +98,13 @@ class MainControlNode(Node):
         滅火流程
         找點定位waypoint -->開啟熱像儀傳熱點訊息--> 量測距離傳給噴頭設定角度 --> 邊噴邊動噴頭-->返回原點
         """
+        if not self.mission.navigateMission():
+            pass
+        if not self.mission.sprayMission():
+            pass
+
         
+
 
 def main():
     if not rclpy.ok():

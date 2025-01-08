@@ -16,7 +16,9 @@ class Mission:
 
     # initial mode
     mode = WAIT_MODE
-
+    def __init__(self, node):
+        self.node = node
+        pass
 
 
 
