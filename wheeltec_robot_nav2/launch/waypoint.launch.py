@@ -55,3 +55,10 @@ def main(args=None):
 
 if __name__ == '__main__':
     main()
+
+# ros2 launch wheeltec_nav2 waypoint.launch.py 
+# [INFO] [launch]: All log files can be found below /home/sr/.ros/log/2024-08-11-18-13-22-322026-sr-253285
+# [INFO] [launch]: Default logging verbosity is set to INFO
+# [ERROR] [launch]: Caught exception in launch (see debug for traceback): Caught multiple exceptions when trying to load file of format [py]:
+#  - InvalidPythonLaunchFileError: launch file at '/home/sr/wheeltec_ros2/install/wheeltec_nav2/share/wheeltec_nav2/launch/waypoint.launch.py' does not contain the required function 'generate_launch_description()'
+#  - InvalidFrontendLaunchFileError: The launch file may have a syntax error, or its format is unknown

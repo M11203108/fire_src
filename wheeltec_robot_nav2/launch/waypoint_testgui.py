@@ -1,62 +1,37 @@
-
 import time
+import json
 from geometry_msgs.msg import PoseStamped
 from rclpy.duration import Duration
 import rclpy
 from nav2_simple_commander.robot_navigator import BasicNavigator, TaskResult
+
+# # 讀取儲存的點位
+# def load_waypoints_from_json(file_path):
+#     with open(file_path, 'r') as file:
+#         data = json.load(file)
+#     return data["points"]
+
+# 讀取儲存的點位
+def load_waypoints_from_json(file_path):
+    with open(file_path, 'r') as file:
+        data = json.load(file)
+    
+    waypoints = data["points"]
+
+    # 列印讀取到的點位，確認是否成功讀取
+    print("讀取到的點位：")
+    for i, waypoint in enumerate(waypoints):
+        print(f"點 {i+1}: {waypoint}")
+    
+    return waypoints
 
 def main():
     rclpy.init()
     navigator = BasicNavigator()
     navigator.waitUntilNav2Active()
 
-    waypoints = [
-        {
-            "x": 0.8468844890594482,
-            "y": -0.0845317393541336,
-            "z": 0.0,
-            "qx": 0.0,
-            "qy": 0.0,
-            "qz": 0.5323170593657491,
-            "qw": 0.8465450657278687
-        },
-        {
-            "x": 0.963241457939148,
-            "y": 0.5066562294960022,
-            "z": 0.0,
-            "qx": 0.0,
-            "qy": 0.0,
-            "qz": 0.7499148066360094,
-            "qw": 0.6615344154222641
-        },
-        {
-            "x": 0.6496784687042236,
-            "y": 0.9676530957221985,
-            "z": 0.0,
-            "qx": 0.0,
-            "qy": 0.0,
-            "qz": 0.9714516320878575,
-            "qw": 0.2372377004479645
-        },
-        {
-            "x": 0.17888396978378296,
-            "y": 1.0539872646331787,
-            "z": 0.0,
-            "qx": 0.0,
-            "qy": 0.0,
-            "qz": -0.9463608910839065,
-            "qw": 0.3231115346546367
-        },
-        {
-            "x": -0.13098974525928497,
-            "y": 0.5612476468086243,
-            "z": 0.0,
-            "qx": 0.0,
-            "qy": 0.0,
-            "qz": -0.7088215549887057,
-            "qw": 0.7053878388400194
-        }
-    ]
+    # 讀取已儲存的點位
+    waypoints = load_waypoints_from_json('/home/sr/gui_ws/saved_points.json')
 
     goal_poses = []
     for wp in waypoints:
@@ -90,6 +65,8 @@ def main():
                 print('Goal failed!')
             else:
                 print('Goal has an invalid return status!')
+                
+            time.sleep(30)
 
     navigator.lifecycleShutdown()
     rclpy.shutdown()

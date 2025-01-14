@@ -37,8 +37,8 @@ def generate_launch_description():
     # ])
     mini_4wd_two_laser = GroupAction([
             generate_robot_node('mini_mec_robot.urdf'),
-            generate_static_transform_publisher_node(['0.435', '-0.3285', '0.2'], ['-1.5707', '3.1415926', '0'], 'base_footprint', 'laser_2'),#front
-            generate_static_transform_publisher_node(['-0.435', '0.3285', '0.2'], ['1.5707', '3.1415926', '0'], 'base_footprint', 'laser_1'),#back
+            generate_static_transform_publisher_node(['0.435', '-0.3285', '0.2'], ['0', '0', '0'], 'base_footprint', 'laser_2'),#front
+            # generate_static_transform_publisher_node(['-0.435', '0.3285', '0.2'], ['1.5707', '3.1415926', '0'], 'base_footprint', 'laser_1'),#back
             
         #     generate_static_transform_publisher_node(['0.0', '0', '0.25'], ['0', '0', '0'], 'base_footprint', 'camera_link'),
     ])                

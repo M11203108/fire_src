@@ -44,6 +44,8 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(std_srvs REQUIRED)
+find_package(ament_cmake_python REQUIRED)
+
 
 ################################################################################
 # Build
@@ -83,8 +85,13 @@ install(DIRECTORY launch rviz
 )
 
 install(
-  TARGETS rplidar_node rplidar_composition rplidar_client
+  TARGETS rplidar_node rplidar_composition rplidar_client 
   RUNTIME DESTINATION lib/${PROJECT_NAME}
+)
+
+install(
+  PROGRAMS src/angle_filter_node.py
+  DESTINATION lib/${PROJECT_NAME}
 )
 
 ################################################################################

@@ -21,7 +21,7 @@
     </link>
 
     <joint name="left_wheel_joint" type="continuous">
-        <origin xyz="-0.325 0.3285 0.09" rpy="-1.57 0 0"/>
+        <origin xyz="-0.325 0.3285 0.09" rpy="1.57 0 0"/>
         <parent link="base_link"/>
         <child link="left_wheel_link"/>
         <axis xyz="0 0 1"/>
@@ -40,7 +40,7 @@
     </link>
 
     <joint name="right_wheel_joint" type="continuous">
-        <origin xyz="-0.325 -0.3285 0.09" rpy="-1.57 0 0"/>
+        <origin xyz="-0.325 -0.3285 0.09" rpy="1.57 0 0"/>
         <parent link="base_link"/>
         <child link="right_wheel_link"/>
         <axis xyz="0 0 1"/>
@@ -59,7 +59,7 @@
     </link>
 
     <joint name="left_front_joint" type="continuous">
-        <origin xyz="0.325 0.3285 0.09" rpy="-1.57 0 0"/>
+        <origin xyz="0.325 0.3285 0.09" rpy="1.57 0 0"/>
         <parent link="base_link"/>
         <child link="left_front_link"/>
         <axis xyz="0 0 1"/>
@@ -78,7 +78,7 @@
     </link>
 
     <joint name="right_front_joint" type="continuous">
-        <origin xyz="0.325 -0.3285 0.09" rpy="-1.57 0 0"/>
+        <origin xyz="0.325 -0.3285 0.09" rpy="1.57 0 0"/>
         <parent link="base_link"/>
         <child link="right_front_link"/>
         <axis xyz="0 0 1"/>

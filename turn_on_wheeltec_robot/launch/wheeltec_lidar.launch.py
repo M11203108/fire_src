@@ -22,9 +22,9 @@ def generate_launch_description():
 
     )
 
-    merge_lidar = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(os.path.join(merge_launch_dir,'merge_2_scan.launch.py'))
-    )
+    # merge_lidar = IncludeLaunchDescription(
+    #     PythonLaunchDescriptionSource(os.path.join(merge_launch_dir,'merge_2_scan.launch.py'))
+    # )
        
 
     # Create the launch description and populate
@@ -38,7 +38,7 @@ def generate_launch_description():
     2.If you are using m10 lidar, please pay attention to distinguish whether it is m10p or not.
     '''
     ld.add_action(a2m12_dir)
-    ld.add_action(merge_lidar)
+    # ld.add_action(merge_lidar)
 
     return ld
 

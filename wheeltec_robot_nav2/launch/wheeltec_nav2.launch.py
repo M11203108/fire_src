@@ -29,7 +29,7 @@ def generate_launch_description():
     #param_top_akm_dl.yaml、param_four_wheel_diff_dl.yaml、param_four_wheel_diff_bs.yaml
     #If you want to use the DWB algorithm, you can change the input parameters to wheeltec-dwb.yaml
     my_param_dir = os.path.join(my_nav_dir, 'param','wheeltec_param')
-    my_param_file = 'param_mini_diff.yaml'
+    my_param_file = 'param_senior_diff.yaml'
     
     # Create the launch configuration variables
     namespace = LaunchConfiguration('namespace')
@@ -106,16 +106,12 @@ def generate_launch_description():
         'use_respawn', default_value='False',
         description='Whether to respawn if a node crashes. Applied when composition is disabled.')
 
-# ============robot launch file================
-
     wheeltec_robot = IncludeLaunchDescription(
             PythonLaunchDescriptionSource(os.path.join(wheeltec_launch_dir, 'turn_on_wheeltec_robot.launch.py')),
     )
     wheeltec_lidar = IncludeLaunchDescription(
             PythonLaunchDescriptionSource(os.path.join(wheeltec_launch_dir, 'wheeltec_lidar.launch.py')),
     )
-
-# ============nav2 launch file================
     # Specify the actions
     bringup_cmd_group = GroupAction([
         PushRosNamespace(

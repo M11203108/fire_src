@@ -55,7 +55,7 @@ class ReadOdomVelToDis(Node):
         self.prev_time = time.time()
 
         # 初始化計時器
-        self.timer_period = 0.05
+        self.timer_period = 0.033
         self.timer = self.create_timer(self.timer_period, self.Vel_to_Dis)
 
         # 設置加速度和減速度時間

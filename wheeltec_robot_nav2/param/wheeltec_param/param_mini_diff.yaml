@@ -37,7 +37,7 @@ amcl:
     z_max: 0.001
     z_rand: 0.059
     z_short: 0.24
-    scan_topic: /lidar_merge_scan #scan
+    scan_topic: /lidar_merge_scan
 
     # Initial Pose
     set_initial_pose: True
@@ -148,19 +148,19 @@ controller_server:
     FollowPath:
       plugin: "dwb_core::DWBLocalPlanner"
       debug_trajectory_details: True
-      min_vel_x: -0.6
+      min_vel_x: -1.0
       min_vel_y: 0.0
-      max_vel_x: 0.6
+      max_vel_x: 1.0
       max_vel_y: 0.0
-      max_vel_theta: 0.6 #1.5
+      max_vel_theta: 1.5
       min_speed_xy: 0.0
-      max_speed_xy: 0.5 #1.0
+      max_speed_xy: 1.0
       min_speed_theta: 0.0
       # Add high threshold velocity for turtlebot 3 issue.
       # https://github.com/ROBOTIS-GIT/turtlebot3_simulations/issues/75
       acc_lim_x: 0.5
       acc_lim_y: 0.0
-      acc_lim_theta: 1.0 
+      acc_lim_theta: 1.0
       decel_lim_x: -0.5
       decel_lim_y: 0.0
       decel_lim_theta: -1.0
@@ -221,7 +221,7 @@ local_costmap:
         mark_threshold: 0
         observation_sources: scan
         scan:
-          topic: /lidar_merge_scan #/scan
+          topic: /lidar_merge_scan
           max_obstacle_height: 2.0
           clearing: True
           marking: True
@@ -257,7 +257,7 @@ global_costmap:
         enabled: True
         observation_sources: scan
         scan:
-          topic: /lidar_merge_scan #/scan
+          topic: /lidar_merge_scan
           max_obstacle_height: 2.0
           clearing: True
           marking: True

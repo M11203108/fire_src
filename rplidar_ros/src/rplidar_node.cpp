@@ -250,6 +250,15 @@ class RPlidarNode : public rclcpp::Node
             scan_msg->angle_min =  M_PI - angle_min;
             scan_msg->angle_max =  M_PI - angle_max;
         }
+
+        // 加入 90° 偏移
+        scan_msg->angle_min += M_PI_2;
+        scan_msg->angle_max += M_PI_2;
+
+        // 確保角度範圍在 [0, 2π]
+        if (scan_msg->angle_min > 2 * M_PI) scan_msg->angle_min -= 2 * M_PI;
+        if (scan_msg->angle_max > 2 * M_PI) scan_msg->angle_max -= 2 * M_PI;
+
         scan_msg->angle_increment = (scan_msg->angle_max - scan_msg->angle_min) / (double)(node_count-1);
 
         scan_msg->scan_time = scan_time;
@@ -263,19 +272,27 @@ class RPlidarNode : public rclcpp::Node
 
         size_t scan_midpoint = node_count / 2;
         for (size_t i = 0; i < node_count; i++) {
-        float read_value = (float)nodes[i].dist_mm_q2 / 4.0f / 1000;
-        float angle = getAngle(nodes[i]);
+            float read_value = (float)nodes[i].dist_mm_q2 / 4.0f / 1000;
+            size_t apply_index = i;
+            if (reverse_data) {
+                apply_index = node_count - 1 - i;
+            }
+            if (flip_X_axis) {
+                if (apply_index >= scan_midpoint)
+                    apply_index = apply_index - scan_midpoint;
+                else
+                    apply_index = apply_index + scan_midpoint;
+            }
 
-        // 判斷角度是否在 0 到 90 度或 225 到 360 度之間
-        if ((angle >= 0.0f && angle <= 80.0f) || (angle >= 190.0f && angle < 360.0f)) {
-            scan_msg->ranges[i] = read_value;
-            scan_msg->intensities[i] = (float)(nodes[i].quality >> 2);
-        } else {
-            // 超出指定角度範圍，設置為無效數據
-            scan_msg->ranges[i] = std::numeric_limits<float>::infinity();
-            scan_msg->intensities[i] = 0;   
+            if (read_value == 0.0)
+                scan_msg->ranges[apply_index] = std::numeric_limits<float>::infinity();
+            else
+                scan_msg->ranges[apply_index] = read_value;
+            scan_msg->intensities[apply_index] = (float)(nodes[apply_index].quality >> 2);
         }
-    }
+
+
+        
 
         pub->publish(*scan_msg);
     }
@@ -473,7 +490,7 @@ public:
                 }
                 op_result = drv->ascendScanData(nodes, count);
                 float angle_min = DEG2RAD(0.0f);
-                float angle_max = DEG2RAD(360.0f);
+                float angle_max = DEG2RAD(359.0f);
                 if (op_result == SL_RESULT_OK) {
                     if (angle_compensate) {
                         //const int angle_compensate_multiple = 1;
@@ -481,6 +498,7 @@ public:
                         int angle_compensate_offset = 0;
                         auto angle_compensate_nodes = new sl_lidar_response_measurement_node_hq_t[angle_compensate_nodes_count];
                         memset(angle_compensate_nodes, 0, angle_compensate_nodes_count*sizeof(sl_lidar_response_measurement_node_hq_t));
+
                         size_t i = 0, j = 0;
                         for( ; i < count; i++ ) {
                             if (nodes[i].dist_mm_q2 != 0) {
@@ -526,7 +544,7 @@ public:
                 } else if (op_result == SL_RESULT_OPERATION_FAIL) {
                     // All the data is invalid, just publish them
                     float angle_min = DEG2RAD(0.0f);
-                    float angle_max = DEG2RAD(360.0f);
+                    float angle_max = DEG2RAD(359.0f);
                     publish_scan(scan_pub, nodes, count,
                                 start_scan_time, scan_duration, inverted, flip_x_axis,
                                 angle_min, angle_max, max_distance,
@@ -589,4 +607,3 @@ int main(int argc, char * argv[])
   rclcpp::shutdown();
   return ret;
 }
-
